@@ -1,8 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AlunosApi.Model;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace AlunosApi.Context
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<IdentityUser>
     {
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
@@ -14,11 +17,32 @@ namespace AlunosApi.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Model.Aluno>().ToTable("Alunos");
-            modelBuilder.Entity<Model.Aluno>().HasKey(a => a.Id);
-            modelBuilder.Entity<Model.Aluno>().Property(a => a.Nome).IsRequired().HasMaxLength(100);
-            modelBuilder.Entity<Model.Aluno>().Property(a => a.Email).IsRequired().HasMaxLength(100);
-            modelBuilder.Entity<Model.Aluno>().Property(a => a.Idade).IsRequired();
+            modelBuilder.Entity<IdentityUserLogin<string>>(entity =>
+            {
+                entity.HasKey(e => e.UserId);
+            });
+            modelBuilder.Entity<IdentityUserRole<string>>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.RoleId });
+            });
+            modelBuilder.Entity<IdentityUserToken<string>>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
+            });
+
+            modelBuilder.Entity<Aluno>(entity =>
+            {
+                entity.ToTable(name: "Alunos");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Nome)
+                    .IsRequired()
+                    .HasMaxLength(100);
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasMaxLength(100);
+                entity.Property(e => e.Idade)
+                    .IsRequired();
+            });
 
             modelBuilder.Entity<Model.Aluno>().HasData(
                 new Model.Aluno
