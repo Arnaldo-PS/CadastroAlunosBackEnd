@@ -1,12 +1,13 @@
 ﻿using AlunosApi.Model;
 using AlunosApi.Services;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AlunosApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AlunosController : ControllerBase
     {
         private IAlunoService _alunoService;
@@ -84,7 +85,7 @@ namespace AlunosApi.Controllers
         {
             try
             {
-                if(aluno.Id == id)
+                if (aluno.Id == id)
                 {
                     await _alunoService.UpdateAlunoAsync(aluno);
                     return Ok($"Aluno de nome: {aluno.Nome} atualizado com sucesso");
@@ -106,7 +107,7 @@ namespace AlunosApi.Controllers
             try
             {
                 var aluno = await _alunoService.GetAlunoByIdAsync(id);
-                if(aluno != null)
+                if (aluno != null)
                 {
                     await _alunoService.DeleteAlunoAsync(aluno);
                     return Ok($"Aluno {aluno.Nome} excluído com sucesso");
