@@ -60,7 +60,7 @@ namespace AlunosApi.Controllers
         {
             var claims = new[]
             {
-                new Claim("email", userInfo.Email),
+                new Claim(JwtRegisteredClaimNames.Email, userInfo.Email),
                 new Claim("meuToken", "token do usuario"),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
